@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Langsir - Dashboard Utama</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+
+    <header class="bg-blue-700 p-6 shadow-xl border-b-4 border-yellow-400">
+        <div class="container mx-auto">
+            <h1 class="text-3xl font-bold tracking-wider"><i class="fas fa-train mr-3"></i>ADMIN LANGSIR</h1>
+            <p class="text-blue-100 mt-1">Sistem Pengendalian & Dokumentasi Operasional Stasiun</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-6 mt-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <a href="langsir.html" class="group block p-6 bg-gray-800 rounded-xl border border-gray-700 hover:border-blue-500 hover:bg-gray-750 transition-all shadow-lg">
+                <div class="text-blue-500 text-4xl mb-4 group-hover:scale-110 transition-transform">
+                    <i class="fas fa-edit"></i>
+                </div>
+                <h2 class="text-xl font-bold mb-2">Input Laporan Langsir</h2>
+                <p class="text-gray-400 text-sm">Catat pergerakan KA, urutan gerbong, dan detail dinasan harian.</p>
+            </a>
+
+            <a href="petugas.html" class="group block p-6 bg-gray-800 rounded-xl border border-gray-700 hover:border-green-500 hover:bg-gray-750 transition-all shadow-lg">
+                <div class="text-green-500 text-4xl mb-4 group-hover:scale-110 transition-transform">
+                    <i class="fas fa-users-cog"></i>
+                </div>
+                <h2 class="text-xl font-bold mb-2">Manajemen Petugas</h2>
+                <p class="text-gray-400 text-sm">Kelola daftar Masinis, Kondektur, dan petugas lapangan (TTD).</p>
+            </a>
+
+            <a href="rute.html" class="group block p-6 bg-gray-800 rounded-xl border border-gray-700 hover:border-yellow-500 hover:bg-gray-750 transition-all shadow-lg">
+                <div class="text-yellow-500 text-4xl mb-4 group-hover:scale-110 transition-transform">
+                    <i class="fas fa-map-marked-alt"></i>
+                </div>
+                <h2 class="text-xl font-bold mb-2">Referensi Rute & Wesel</h2>
+                <p class="text-gray-400 text-sm">Panduan jalur, posisi wesel, dan aturan rute perjalanan.</p>
+            </a>
+
+            <a href="catatan.html" class="group block p-6 bg-gray-800 rounded-xl border border-gray-700 hover:border-red-500 hover:bg-gray-750 transition-all shadow-lg">
+                <div class="text-red-500 text-4xl mb-4 group-hover:scale-110 transition-transform">
+                    <i class="fas fa-sticky-note"></i>
+                </div>
+                <h2 class="text-xl font-bold mb-2">Catatan (Note)</h2>
+                <p class="text-gray-400 text-sm">Data Taspat, pengumuman penting, dan catatan operasional lainnya.</p>
+            </a>
+
+        </div>
+
+        <div class="mt-12 bg-blue-900/30 border border-blue-800 rounded-lg p-4">
+            <h3 class="text-blue-400 font-bold mb-1 uppercase text-xs tracking-widest">Status Gudang Data:</h3>
+            <div class="flex items-center text-sm text-gray-300">
+                <div class="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+                Terhubung ke Google Firebase (Jakarta)
+            </div>
+        </div>
+    </main>
+
+    <footer class="text-center text-gray-600 text-xs mt-12 mb-6">
+        &copy; 2026 Admin Langsir Digital. Dikelola oleh Profesional Kereta Api.
+    </footer>
+
+</body>
+</html>
