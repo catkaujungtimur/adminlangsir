@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manajemen Petugas Stasiun</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-5">
+    <div class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-lg">
+        <h2 class="text-2xl font-bold mb-4 text-blue-600">Tambah Petugas Baru</h2>
+        
+        <div class="space-y-3">
+            <input type="text" id="nama" placeholder="Nama Lengkap (Contoh: Zainudin)" class="w-full p-2 border rounded">
+            <input type="text" id="nipp" placeholder="NIPP" class="w-full p-2 border rounded">
+            <select id="jabatan" class="w-full p-2 border rounded">
+                <option value="Kondektur">Kondektur</option>
+                <option value="Masinis">Masinis</option>
+                <option value="Asisten Masinis">Asisten Masinis</option>
+                <option value="PLR">PLR</option>
+            </select>
+            <button onclick="simpanData()" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Simpan ke Firebase</button>
+        </div>
+
+        <hr class="my-6">
+
+        <h3 class="font-bold mb-2 text-gray-700">Daftar Petugas Tercatat:</h3>
+        <ul id="daftarPetugas" class="list-disc pl-5 space-y-1 text-sm">
+            </ul>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // --- MASUKKAN KODE FIREBASE CONFIG KAMU DI SINI ---
+        const firebaseConfig = {
+            apiKey: "PASTE_API_KEY_KAMU",
+            authDomain: "PASTE_DOMAIN_KAMU",
+            projectId: "PASTE_PROJECT_ID_KAMU",
+            storageBucket: "...",
+            messagingSenderId: "...",
+            appId: "..."
+        };
+
+        // Inisialisasi Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Fungsi Simpan
+        window.simpanData = async () => {
+            const nama = document.getElementById('nama').value.trim();
+            const nipp = document.getElementById('nipp').value.trim();
+            const jabatan = document.getElementById('jabatan').value;
+
+            if (nama == "" || nipp == "") return alert("Isi nama dan NIPP dulu!");
+
+            try {
+                await addDoc(collection(db, "petugas"), {
+                    nama: nama.toUpperCase(), // Otomatis jadi HURUF KAPITAL biar rapi
+                    nipp: nipp,
+                    jabatan: jabatan,
+                    waktuInput: new Date()
+                });
+                document.getElementById('nama').value = "";
+                document.getElementById('nipp').value = "";
+                alert("Data berhasil masuk gudang Google!");
+            } catch (e) {
+                console.error("Error: ", e);
+            }
+        };
+
+        // Tampilkan Data secara Real-time
+        const q = query(collection(db, "petugas"), orderBy("waktuInput", "desc"));
+        onSnapshot(q, (snapshot) => {
+            const list = document.getElementById('daftarPetugas');
+            list.innerHTML = "";
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                list.innerHTML += `<li><b>${data.nama}</b> (${data.jabatan}) - NIPP: ${data.nipp}</li>`;
+            });
+        });
+    </script>
+</body>
+</html>
