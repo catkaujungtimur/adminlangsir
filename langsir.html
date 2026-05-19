@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input Laporan Langsir</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-900 text-white min-h-screen p-5">
+
+    <div class="max-w-4xl mx-auto bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-2xl">
+        <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-4">
+            <h2 class="text-2xl font-bold text-blue-400 flex items-center">
+                <i class="fas fa-edit mr-3"></i>Input Laporan Langsir Harian
+            </h2>
+            <a href="index.html" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded text-sm transition-all">
+                <i class="fas fa-arrow-left mr-2"></i>Kembali ke Dashboard
+            </a>
+        </div>
+
+        <form id="formLangsir" onsubmit="simpanLaporan(event)" class="space-y-6">
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-gray-750 p-4 rounded-lg border border-gray-700">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-400 mb-1">Nomor Formulir / Dokumen</label>
+                    <input type="text" id="noForm" placeholder="Contoh: 25/KTG/V/2026" required
+                           class="w-full p-2 bg-gray-900 border border-gray-700 rounded text-white focus:border-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-400 mb-1">Tanggal Dinas</label>
+                    <input type="date" id="tglDinas" required
+                           class="w-full p-2 bg-gray-900 border border-gray-700 rounded text-white focus:border-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-400 mb-1">Shift Dinasan</label>
+                    <select id="shiftDinas" required class="w-full p-2 bg-gray-900 border border-gray-700 rounded text-white focus:border-blue-500 outline-none">
+                        <option value="Malam">Malam (00:00 - 08:00)</option>
+                        <option value="Pagi">Pagi (08:00 - 16:00)</option>
+                        <option value="Siang">Siang (16:00 - 00:00)</option>
+                    </select>
+                </div>
+            </div>
+
+            <h3 class="text-lg font-bold text-yellow-400 -mb-2"><i class="fas fa-users mr-2"></i>Personel Lapangan (TTD)</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-gray-750 p-4 rounded-lg border border-gray-700">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-400 mb-1">PPKA Dinas</label>
+                    <select id="selectPPKA" required class="w-full p-2 bg-gray-900 border border-gray-700 rounded text-white focus:border-blue-500 outline-none">
+                        <option value="">-- Pilih PPKA --</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-400 mb-1">Masinis</label>
+                    <select id="selectMasinis" required class="w-full p-2 bg-gray-900 border border-gray-700 rounded text-white focus:border-blue-500 outline-none">
+                        <option value="">-- Pilih Masinis --</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-400 mb-1">Pengawas Peron / PLR</label>
+                    <select id="selectPLR" required class="w-full p-2 bg-gray-900 border border-gray-700 rounded text-white focus:border-blue-500 outline-none">
+                        <option value="">-- Pilih PLR --</option>
+                    </select>
+                </div>
+            </div>
+
+            <h3 class="text-lg font-bold text-yellow-400 -mb-2"><i class="fas fa-train mr-2"></i>Pergerakan Urutan KA / Gerbong</h3>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 bg-gray-750 p-4 rounded-lg border border-gray-700">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-400 mb-1">Nomor / Nama KA</label>
+                    <input type="text" id="nomorKA" placeholder="Contoh: KA 112 (Gaya Baru)" required
+                           class="w-full p-2 bg-gray-900 border border-gray-700 rounded text-white focus:border-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-400 mb-1">Jam Mulai Langsir</label>
+                    <input type="time" id="jamMulai" required class="w-full p-2 bg-gray-900 border border-gray-700 rounded text-white focus:border-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-400 mb-1">Jalur / Emplasemen</label>
+                    <input type="text" id="jalurStasiun" placeholder="Contoh: Jalur 3 ke Jalur 5" required
+                           class="w-full p-2 bg-gray-900 border border-gray-700 rounded text-white focus:border-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-400 mb-1">Keterangan Formasi</label>
+                    <input type="text" id="keteranganFormasi" placeholder="Contoh: Tambah 2 K3, Lepas P pembangkit"
+                           class="w-full p-2 bg-gray-900 border border-gray-700 rounded text-white focus:border-blue-500 outline-none">
+                </div>
+            </div>
+
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white p-3 rounded-lg font-bold text-lg shadow-lg transition-all">
+                <i class="fas fa-save mr-2"></i>Kunci & Simpan Laporan Langsir
+            </button>
+        </form>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Konfigurasi Firebase milikmu
+        const firebaseConfig = {
+            apiKey: "AIzaSyDJulU3KZVfCLltfL_FmrIDtOzvem0ISIs",
+            authDomain: "catkaujungtimur.firebaseapp.com",
+            projectId: "catkaujungtimur",
+            storageBucket: "catkaujungtimur.firebasestorage.app",
+            messagingSenderId: "477256999091",
+            appId: "1:477256999091:web:0b5e21074bbc2989dcd0c6"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Ambil data petugas secara otomatis saat halaman dibuka
+        async function muatPetugasOtomatis() {
+            try {
+                const q = query(collection(db, "petugas"), orderBy("nama", "asc"));
+                const querySnapshot = await getDocs(q);
+                
+                const selectPPKA = document.getElementById('selectPPKA');
+                const selectMasinis = document.getElementById('selectMasinis');
+                const selectPLR = document.getElementById('selectPLR');
+
+                querySnapshot.forEach((doc) => {
+                    const petugas = doc.data();
+                    const opsiHtml = `<option value="${petugas.nama} (NIPP. ${petugas.nipp})">${petugas.nama} [${petugas.jabatan}]</option>`;
+                    
+                    // Kelompokkan otomatis berdasarkan jabatan ke menu dropdown masing-masing
+                    if (petugas.jabatan === "PPKA" || petugas.jabatan === "PRS") {
+                        selectPPKA.innerHTML += opsiHtml;
+                    } else if (petugas.jabatan === "Masinis" || petugas.jabatan === "Asisten Masinis") {
+                        selectMasinis.innerHTML += opsiHtml;
+                    } else {
+                        selectPLR.innerHTML += opsiHtml; // Untuk PLR, Kondektur, Schowing, dll
+                    }
+                });
+            } catch (error) {
+                console.error("Gagal memuat daftar petugas: ", error);
+            }
+        }
+
+        // Jalankan fungsi load data saat halaman siap
+        window.addEventListener('DOMContentLoaded', () => {
+            // Set default tanggal hari ini otomatis
+            document.getElementById('tglDinas').valueAsDate = new Date();
+            muatPetugasOtomatis();
+        });
+
+        // Fungsi kirim data laporan harian ke Firebase
+        window.simpanLaporan = async (event) => {
+            event.preventDefault(); // Mencegah reload halaman
+
+            try {
+                await addDoc(collection(db, "laporan_langsir"), {
+                    noForm: document.getElementById('noForm').value.trim(),
+                    tanggal: document.getElementById('tglDinas').value,
+                    shift: document.getElementById('shiftDinas').value,
+                    ppka: document.getElementById('selectPPKA').value,
+                    masinis: document.getElementById('selectMasinis').value,
+                    plr: document.getElementById('selectPLR').value,
+                    nomorKA: document.getElementById('nomorKA').value.trim().toUpperCase(),
+                    jamMulai: document.getElementById('jamMulai').value,
+                    jalur: document.getElementById('jalurStasiun').value.trim(),
+                    keterangan: document.getElementById('keteranganFormasi').value.trim(),
+                    waktuSubmit: new Date()
+                });
+
+                alert("Laporan Langsir sukses dikunci ke dalam database Google!");
+                // Reset form pergerakan KA saja, data shift dan petugas tetap tersimpan agar tidak perlu input ulang jika ada KA kedua
+                document.getElementById('nomorKA').value = "";
+                document.getElementById('jamMulai').value = "";
+                document.getElementById('jalurStasiun').value = "";
+                document.getElementById('keteranganFormasi').value = "";
+                
+            } catch (e) {
+                alert("Gagal mengunci laporan: " + e.message);
+            }
+        };
+    </script>
+</body>
+</html>
