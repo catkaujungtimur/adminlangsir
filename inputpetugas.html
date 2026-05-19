@@ -8,7 +8,393 @@
 </head>
 <body class="bg-gray-100 p-5">
     <div class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-lg">
-        <h2 class="text-2xl font-bold mb-4 text-blue-600">Tambah Petugas Baru</h2>
+        <h2 class="text-2xl font-bold mb-4 text-blue-600">Tambah Petugas Baru</h2><!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manajemen Petugas Stasiun</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Sora:wght@400;600;700&display=swap');
+        body { font-family: 'Sora', sans-serif; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .tab-btn.active { background: #1d4ed8; color: white; }
+        .tab-btn { transition: all .2s; }
+        #previewTable tr:nth-child(even) { background: #f0f4ff; }
+        #previewTable tr.duplikat { background: #fef2f2; }
+        #previewTable tr.duplikat td:first-child::before { content: "⚠ "; color: #ef4444; }
+        .badge { display: inline-block; font-size: 11px; padding: 1px 7px; border-radius: 99px; font-weight: 600; }
+        .badge-ok { background: #dcfce7; color: #16a34a; }
+        .badge-dup { background: #fee2e2; color: #dc2626; }
+        .badge-warn { background: #fef9c3; color: #ca8a04; }
+        input, select, textarea { font-family: 'Sora', sans-serif; }
+        .search-highlight { background: #fef08a; border-radius: 2px; }
+        #daftarPetugas li { transition: background .15s; border-radius: 6px; padding: 4px 8px; }
+        #daftarPetugas li:hover { background: #eff6ff; }
+        .spinner { border: 3px solid #e0e7ff; border-top-color: #3b82f6; border-radius: 50%; width: 20px; height: 20px; animation: spin .7s linear infinite; display: inline-block; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen p-4">
+
+<div class="max-w-2xl mx-auto">
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-blue-700 to-blue-500 text-white rounded-2xl px-6 py-5 mb-4 shadow-lg flex items-center gap-4">
+        <div>
+            <div class="text-xs mono opacity-75 tracking-widest mb-1">SISTEM MANAJEMEN PETUGAS</div>
+            <div class="text-2xl font-bold tracking-tight">Stasiun Ujung Timur</div>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex gap-2 mb-4">
+        <button class="tab-btn active flex-1 py-2 rounded-xl border-2 border-blue-700 font-semibold text-sm" onclick="showTab('satu')">✏️ Input Satu</button>
+        <button class="tab-btn flex-1 py-2 rounded-xl border-2 border-blue-700 font-semibold text-sm text-blue-700" onclick="showTab('massal')">📋 Input Massal</button>
+        <button class="tab-btn flex-1 py-2 rounded-xl border-2 border-blue-700 font-semibold text-sm text-blue-700" onclick="showTab('daftar')">🔍 Daftar & Cari</button>
+    </div>
+
+    <!-- TAB: Input Satu -->
+    <div id="tab-satu" class="bg-white rounded-2xl shadow p-6">
+        <h2 class="text-lg font-bold mb-4 text-blue-700">Tambah Petugas Satu Per Satu</h2>
+        <div class="space-y-3">
+            <input type="text" id="nama" placeholder="Nama Lengkap (mis: ZAINUL)" class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 outline-none mono uppercase">
+            <input type="text" id="nipp" placeholder="NIPP" class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 outline-none mono">
+            <select id="jabatan" class="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 outline-none">
+                <option value="PPKA">PPKA</option>
+                <option value="Kondektur">Kondektur</option>
+                <option value="Masinis">Masinis</option>
+                <option value="Asisten Masinis">Asisten Masinis</option>
+                <option value="PLR">PLR</option>
+                <option value="PRS">PRS</option>
+                <option value="Schowing">Schowing</option>
+                <option value="PLR Dipo">PLR Dipo</option>
+            </select>
+            <button onclick="simpanSatu()" id="btnSimpanSatu" class="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-xl font-semibold transition">
+                💾 Simpan ke Firebase
+            </button>
+            <div id="msgSatu" class="text-sm text-center hidden"></div>
+        </div>
+    </div>
+
+    <!-- TAB: Input Massal -->
+    <div id="tab-massal" class="bg-white rounded-2xl shadow p-6 hidden">
+        <h2 class="text-lg font-bold mb-1 text-blue-700">Input Massal dari Excel</h2>
+        <p class="text-xs text-gray-500 mb-3">Copy kolom <b>NIPP · NAMA · JABATAN</b> dari Excel lalu paste ke kotak di bawah (pisah TAB antar kolom, Enter antar baris). Jabatan akan terdeteksi otomatis.</p>
+        
+        <textarea id="pasteArea" rows="10" placeholder="53590	ZAINUL	SCHOWING&#10;59777	FENDI K	SCHOWING&#10;73582	YOGI	PLR&#10;..." 
+            class="w-full p-3 border-2 border-gray-200 rounded-xl mono text-xs focus:border-blue-500 outline-none resize-y"></textarea>
+        
+        <button onclick="parsePaste()" class="mt-3 w-full bg-indigo-600 hover:bg-indigo-700 text-white p-3 rounded-xl font-semibold transition">
+            🔎 Parse & Preview
+        </button>
+
+        <!-- Preview -->
+        <div id="previewSection" class="hidden mt-5">
+            <div class="flex items-center justify-between mb-2">
+                <div class="font-semibold text-sm">Preview Data</div>
+                <div id="previewStats" class="text-xs text-gray-500"></div>
+            </div>
+            <div class="overflow-auto rounded-xl border border-gray-200 max-h-72">
+                <table class="w-full text-xs" id="previewTable">
+                    <thead class="bg-blue-50 sticky top-0">
+                        <tr>
+                            <th class="text-left p-2 font-semibold">NIPP</th>
+                            <th class="text-left p-2 font-semibold">NAMA</th>
+                            <th class="text-left p-2 font-semibold">JABATAN</th>
+                            <th class="text-left p-2 font-semibold">STATUS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="previewBody"></tbody>
+                </table>
+            </div>
+            <button onclick="simpanMassal()" id="btnSimpanMassal" class="mt-3 w-full bg-green-600 hover:bg-green-700 text-white p-3 rounded-xl font-semibold transition">
+                💾 Simpan Semua Data Baru ke Firebase
+            </button>
+            <div id="msgMassal" class="text-sm text-center mt-2 hidden"></div>
+        </div>
+    </div>
+
+    <!-- TAB: Daftar & Cari -->
+    <div id="tab-daftar" class="bg-white rounded-2xl shadow p-6 hidden">
+        <h2 class="text-lg font-bold mb-3 text-blue-700">Daftar & Pencarian Petugas</h2>
+        <div class="flex gap-2 mb-4">
+            <input type="text" id="searchInput" placeholder="Cari nama, NIPP, atau jabatan..." 
+                class="flex-1 p-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 outline-none text-sm"
+                oninput="filterDaftar()">
+            <button onclick="document.getElementById('searchInput').value='';filterDaftar();" class="px-4 border-2 border-gray-200 rounded-xl text-gray-400 hover:border-red-300 hover:text-red-400 transition">✕</button>
+        </div>
+        <div id="searchInfo" class="text-xs text-gray-400 mb-2"></div>
+        <ul id="daftarPetugas" class="space-y-1 text-sm max-h-96 overflow-auto pr-1"></ul>
+        <div id="emptyMsg" class="text-center text-gray-400 text-sm py-6 hidden">Tidak ada data ditemukan.</div>
+    </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyDJulU3KZVfCLltfL_FmrIDtOzvem0ISIs",
+    authDomain: "catkaujungtimur.firebaseapp.com",
+    projectId: "catkaujungtimur",
+    storageBucket: "catkaujungtimur.firebasestorage.app",
+    messagingSenderId: "477256999091",
+    appId: "1:477256999091:web:0b5e21074bbc2989dcd0c6"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// ─── Daftar jabatan valid & variasi penulisan ───────────────────────────────
+const JABATAN_MAP = {
+    'PPKA': 'PPKA',
+    'KONDEKTUR': 'Kondektur',
+    'MASINIS': 'Masinis',
+    'ASISTEN MASINIS': 'Asisten Masinis',
+    'ASMAS': 'Asisten Masinis',
+    'PLR DIPO': 'PLR Dipo',
+    'PLR': 'PLR',
+    'PRS': 'PRS',
+    'SCHOWING': 'Schowing',
+    'SHOWING': 'Schowing',
+    'SCOWING': 'Schowing',
+};
+
+function normalizeJabatan(raw) {
+    const upper = raw.trim().toUpperCase();
+    // Cek exact match
+    if (JABATAN_MAP[upper]) return { val: JABATAN_MAP[upper], ok: true };
+    // Partial match
+    for (const key of Object.keys(JABATAN_MAP)) {
+        if (upper.includes(key) || key.includes(upper)) return { val: JABATAN_MAP[key], ok: true };
+    }
+    return { val: raw.trim(), ok: false };
+}
+
+// ─── Data lokal ────────────────────────────────────────────────────────────
+let allPetugas = []; // { nipp, nama, jabatan }
+let parsedRows = [];  // hasil parse paste
+
+// ─── Tab switching ──────────────────────────────────────────────────────────
+window.showTab = (t) => {
+    ['satu','massal','daftar'].forEach(id => {
+        document.getElementById('tab-'+id).classList.add('hidden');
+        document.querySelectorAll('.tab-btn').forEach((b,i) => {
+            b.classList.remove('active');
+            b.classList.add('text-blue-700');
+        });
+    });
+    document.getElementById('tab-'+t).classList.remove('hidden');
+    const idx = ['satu','massal','daftar'].indexOf(t);
+    const btns = document.querySelectorAll('.tab-btn');
+    btns[idx].classList.add('active');
+    btns[idx].classList.remove('text-blue-700');
+    if (t === 'daftar') filterDaftar();
+};
+
+// ─── Simpan satu ────────────────────────────────────────────────────────────
+window.simpanSatu = async () => {
+    const namaInput = document.getElementById('nama');
+    const nippInput = document.getElementById('nipp');
+    const jabatan   = document.getElementById('jabatan').value;
+    const msg       = document.getElementById('msgSatu');
+    const btn       = document.getElementById('btnSimpanSatu');
+
+    const nama = namaInput.value.trim().toUpperCase();
+    const nipp = nippInput.value.trim();
+    if (!nama || !nipp) { showMsg(msg, '⚠️ Isi nama dan NIPP dulu!', 'warn'); return; }
+
+    // Cek duplikat
+    const duplikat = allPetugas.find(p => p.nipp === nipp && p.nama === nama && p.jabatan === jabatan);
+    if (duplikat) { showMsg(msg, '⚠️ Data ini sudah ada di database!', 'warn'); return; }
+
+    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Menyimpan...';
+    try {
+        await addDoc(collection(db, "petugas"), { nama, nipp, jabatan, waktuInput: new Date() });
+        namaInput.value = ""; nippInput.value = "";
+        showMsg(msg, '✅ Data berhasil disimpan!', 'ok');
+    } catch(e) { showMsg(msg, '❌ Gagal: ' + e.message, 'err'); }
+    btn.disabled = false; btn.innerHTML = '💾 Simpan ke Firebase';
+};
+
+// ─── Parse paste massal ─────────────────────────────────────────────────────
+window.parsePaste = () => {
+    const raw = document.getElementById('pasteArea').value.trim();
+    if (!raw) return alert('Tempel data dulu!');
+
+    const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
+    parsedRows = [];
+
+    lines.forEach(line => {
+        // Pisah pakai TAB, atau lebih dari 2 spasi
+        const cols = line.split(/\t+/).map(c => c.trim());
+        if (cols.length < 2) return;
+
+        let nipp, nama, jabatanRaw;
+        if (cols.length >= 3) {
+            [nipp, nama, jabatanRaw] = cols;
+        } else {
+            // Hanya 2 kolom → tidak ada jabatan
+            [nipp, nama] = cols;
+            jabatanRaw = '';
+        }
+
+        const { val: jabatan, ok: jabOk } = jabatanRaw ? normalizeJabatan(jabatanRaw) : { val: '?', ok: false };
+        const namaClear = nama.toUpperCase().trim();
+        const nippClear = nipp.trim();
+
+        // Cek duplikat dengan data Firebase yang sudah ada
+        const isDup = allPetugas.some(p =>
+            p.nipp === nippClear && p.nama === namaClear && p.jabatan === jabatan
+        );
+
+        parsedRows.push({ nipp: nippClear, nama: namaClear, jabatan, jabOk, isDup });
+    });
+
+    renderPreview();
+};
+
+function renderPreview() {
+    const tbody = document.getElementById('previewBody');
+    tbody.innerHTML = '';
+    let dupCount = 0, warnCount = 0;
+
+    parsedRows.forEach((row, i) => {
+        if (row.isDup) dupCount++;
+        if (!row.jabOk) warnCount++;
+        const tr = document.createElement('tr');
+        tr.className = row.isDup ? 'duplikat' : '';
+        tr.innerHTML = `
+            <td class="p-2 mono">${row.nipp}</td>
+            <td class="p-2 font-semibold">${row.nama}</td>
+            <td class="p-2">
+                ${row.jabOk
+                    ? row.jabatan
+                    : `<select class="jabatan-select border rounded px-1 py-0.5 text-xs" data-idx="${i}">
+                        <option value="">-- Pilih --</option>
+                        ${['PPKA','Kondektur','Masinis','Asisten Masinis','PLR','PRS','Schowing','PLR Dipo']
+                            .map(j=>`<option value="${j}" ${row.jabatan===j?'selected':''}>${j}</option>`).join('')}
+                      </select>`
+                }
+            </td>
+            <td class="p-2">
+                ${row.isDup
+                    ? '<span class="badge badge-dup">Duplikat</span>'
+                    : row.jabOk
+                        ? '<span class="badge badge-ok">Baru ✓</span>'
+                        : '<span class="badge badge-warn">Cek Jabatan</span>'
+                }
+            </td>`;
+        tbody.appendChild(tr);
+    });
+
+    // Pasang event listener ke dropdown jabatan
+    tbody.querySelectorAll('.jabatan-select').forEach(sel => {
+        sel.addEventListener('change', e => {
+            const idx = parseInt(e.target.dataset.idx);
+            parsedRows[idx].jabatan = e.target.value;
+            parsedRows[idx].jabOk = !!e.target.value;
+        });
+    });
+
+    const newCount = parsedRows.filter(r => !r.isDup).length;
+    document.getElementById('previewStats').textContent =
+        `${parsedRows.length} baris · ${newCount} baru · ${dupCount} duplikat${warnCount?' · '+warnCount+' jabatan perlu cek':''}`;
+    document.getElementById('previewSection').classList.remove('hidden');
+}
+
+// ─── Simpan massal ──────────────────────────────────────────────────────────
+window.simpanMassal = async () => {
+    const toSave = parsedRows.filter(r => !r.isDup && r.jabatan && r.jabatan !== '?');
+    if (!toSave.length) {
+        showMsg(document.getElementById('msgMassal'), '⚠️ Tidak ada data baru untuk disimpan.', 'warn');
+        return;
+    }
+
+    const btn = document.getElementById('btnSimpanMassal');
+    const msg = document.getElementById('msgMassal');
+    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Menyimpan ' + toSave.length + ' data...';
+
+    let ok = 0, fail = 0;
+    for (const row of toSave) {
+        try {
+            await addDoc(collection(db, "petugas"), {
+                nama: row.nama, nipp: row.nipp, jabatan: row.jabatan, waktuInput: new Date()
+            });
+            ok++;
+        } catch { fail++; }
+    }
+
+    btn.disabled = false; btn.innerHTML = '💾 Simpan Semua Data Baru ke Firebase';
+    showMsg(msg, `✅ ${ok} data berhasil disimpan${fail?' · '+fail+' gagal':''}!`, ok ? 'ok' : 'err');
+    // Reset preview
+    parsedRows = [];
+    document.getElementById('previewSection').classList.add('hidden');
+    document.getElementById('pasteArea').value = '';
+};
+
+// ─── Helper pesan ────────────────────────────────────────────────────────────
+function showMsg(el, text, type) {
+    el.textContent = text;
+    el.className = 'text-sm text-center mt-2 py-2 rounded-lg ' +
+        (type==='ok' ? 'bg-green-50 text-green-700' :
+         type==='warn' ? 'bg-yellow-50 text-yellow-700' : 'bg-red-50 text-red-700');
+    el.classList.remove('hidden');
+    setTimeout(() => el.classList.add('hidden'), 4000);
+}
+
+// ─── Daftar real-time ────────────────────────────────────────────────────────
+const q = query(collection(db, "petugas"), orderBy("waktuInput", "desc"));
+onSnapshot(q, (snapshot) => {
+    allPetugas = [];
+    snapshot.forEach(doc => {
+        const d = doc.data();
+        allPetugas.push({ nipp: d.nipp, nama: d.nama, jabatan: d.jabatan });
+    });
+    filterDaftar();
+});
+
+// ─── Filter / pencarian ───────────────────────────────────────────────────────
+window.filterDaftar = () => {
+    const q = document.getElementById('searchInput').value.toLowerCase().trim();
+    const list = document.getElementById('daftarPetugas');
+    const emptyMsg = document.getElementById('emptyMsg');
+    const info = document.getElementById('searchInfo');
+    list.innerHTML = '';
+
+    const filtered = q
+        ? allPetugas.filter(p =>
+            p.nipp.toLowerCase().includes(q) ||
+            p.nama.toLowerCase().includes(q) ||
+            p.jabatan.toLowerCase().includes(q))
+        : allPetugas;
+
+    info.textContent = q
+        ? `${filtered.length} dari ${allPetugas.length} petugas ditemukan`
+        : `${allPetugas.length} petugas terdaftar`;
+
+    if (!filtered.length) { emptyMsg.classList.remove('hidden'); return; }
+    emptyMsg.classList.add('hidden');
+
+    filtered.forEach(p => {
+        const li = document.createElement('li');
+        const display = q
+            ? `<b>${highlight(p.nama, q)}</b> · <span class="text-blue-600">${highlight(p.jabatan, q)}</span> · <span class="mono text-gray-400">${highlight(p.nipp, q)}</span>`
+            : `<b>${p.nama}</b> · <span class="text-blue-600">${p.jabatan}</span> · <span class="mono text-gray-400">${p.nipp}</span>`;
+        li.innerHTML = display;
+        list.appendChild(li);
+    });
+};
+
+function highlight(text, q) {
+    if (!q) return text;
+    const re = new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi');
+    return text.replace(re, '<mark class="search-highlight">$1</mark>');
+}
+</script>
+</body>
+</html>
         
         <div class="space-y-3">
             <input type="text" id="nama" placeholder="Nama Lengkap (Contoh: Zainudin)" class="w-full p-2 border rounded">
