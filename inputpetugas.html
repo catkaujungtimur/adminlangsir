@@ -160,6 +160,7 @@ const JABATAN_MAP = {
     'SCHOWING': 'Schowing',
     'SHOWING': 'Schowing',
     'SCOWING': 'Schowing',
+    'PK/OC': 'PK/OC',
 };
 
 function normalizeJabatan(raw) {
@@ -274,7 +275,7 @@ function renderPreview() {
                     ? row.jabatan
                     : `<select class="jabatan-select border rounded px-1 py-0.5 text-xs" data-idx="${i}">
                         <option value="">-- Pilih --</option>
-                        ${['PPKA','Kondektur','Masinis','Asisten Masinis','PLR','PRS','Schowing','PLR Dipo']
+                        ${['PPKA','Kondektur','Masinis','Asisten Masinis','PLR','PRS','Schowing','PLR Dipo','PK/OC']
                             .map(j=>`<option value="${j}" ${row.jabatan===j?'selected':''}>${j}</option>`).join('')}
                       </select>`
                 }
@@ -409,6 +410,7 @@ function highlight(text, q) {
                 <option value="PRS">PRS</option>
                 <option value="Schowing">Schowing</option>
                 <option value="PLR Dipo">PLR Dipo</option>
+                <option value="PK/OC">PK/OC</option>
             </select>
             <button onclick="simpanData()" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Simpan ke Firebase</button>
         </div>
